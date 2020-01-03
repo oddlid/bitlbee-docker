@@ -106,7 +106,7 @@ RUN cd /root \
 	&& if [ "$STRIP" == "true" ]; then strip /usr/lib/purple-2/telegram-purple.so; fi
 
 FROM alpine:latest
-LABEL maintainer=stevesbrain,realies
+LABEL maintainer=stevesbrain,realies,oddlid
 
 RUN apk update
 RUN apk upgrade
