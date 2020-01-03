@@ -111,6 +111,7 @@ LABEL maintainer=stevesbrain,realies,oddlid
 RUN apk update
 RUN apk upgrade
 RUN apk add \
+	ca-certificates \
 	glib \
 	gnutls \
 	json-glib \
@@ -121,6 +122,8 @@ RUN apk add \
 	libpurple-xmpp \
 	libwebp \
 	pidgin \
+	tini \
+	&& rm -rf /var/cache/apk/* \
 	&& adduser -u 1000 -S bitlbee \
 	&& addgroup -g 1000 -S bitlbee \
 	&& mkdir /bitlbee-data \
@@ -159,4 +162,5 @@ COPY --from=telegram-builder /usr/lib/purple-2/telegram-purple.so /usr/lib/purpl
 
 USER bitlbee
 VOLUME /bitlbee-data
-ENTRYPOINT ["/usr/local/sbin/bitlbee", "-F", "-n", "-d", "/bitlbee-data"]
+ENTRYPOINT ["tini", "-g", "--"]
+CMD ["/usr/local/sbin/bitlbee", "-F", "-n", "-d", "/bitlbee-data"]
