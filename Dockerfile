@@ -1,13 +1,13 @@
 FROM alpine:latest as builder
-LABEL maintainer=stevesbrain,realies
+LABEL maintainer=stevesbrain,realies,oddlid
 
-ENV BITLBEE_COMMIT 0b1448f
-ENV DISCORD_COMMIT ba47eed
-ENV FACEBOOK_COMMIT 553593d
-ENV SKYPE_COMMIT 2290013
-ENV SLACK_COMMIT 39c7b5b
+ENV BITLBEE_COMMIT 3a547ee9dcf5c790f68ee2118389dd27ed471b23
+ENV DISCORD_COMMIT bc967eb6ab1bd98ea9f5d90eb567e41bb92e6391
+ENV FACEBOOK_COMMIT c76b36bd29ee8b32fd038c7b7254931c71ecce1b
+ENV SKYPE_COMMIT 09f72e27eb2ee129959de2b8eb7a1fd2c2830369
+ENV SLACK_COMMIT be97802c7fd0b611722d2f551756e2a2672f6084
 ENV STEAM_COMMIT a6444d2
-ENV TELEGRAM_COMMIT f686f8a
+ENV TELEGRAM_COMMIT 44a1349bf4c57e8b648dae113ec7cf3bdbde0789
 
 ENV STRIP true
 
@@ -16,16 +16,17 @@ RUN set -x \
 	&& apk upgrade \
 	&& apk add --virtual build-dependencies \
 	autoconf \
-	gnutls-dev \
-	pidgin-dev \
-	libgcrypt-dev \
-	libwebp-dev \
 	automake \
 	build-base \
 	curl \
 	git \
+	gnutls-dev \
 	json-glib-dev \
-	libtool
+	libgcrypt-dev \
+	libtool \
+	libwebp-dev \
+	pidgin-dev \
+	python2
 RUN cd /root \
 	&& git clone -n https://github.com/bitlbee/bitlbee \
 	&& cd bitlbee \
@@ -109,7 +110,8 @@ LABEL maintainer=stevesbrain,realies
 
 RUN apk update
 RUN apk upgrade
-RUN apk add glib \
+RUN apk add \
+	glib \
 	gnutls \
 	json-glib \
 	libgcrypt \
@@ -151,7 +153,8 @@ COPY --from=slack-builder /usr/lib/purple-2/libslack.so /usr/lib/purple-2/libsla
 
 COPY --from=steam-builder /usr/local/lib/bitlbee/steam.* /usr/local/lib/bitlbee/
 
-COPY --from=telegram-builder /etc/telegram-purple/server.tglpub /etc/telegram-purple/server.tglpub
+# @2020-01-03: server.tglpub doesn't exist in current build, so uncommenting
+#COPY --from=telegram-builder /etc/telegram-purple/server.tglpub /etc/telegram-purple/server.tglpub
 COPY --from=telegram-builder /usr/lib/purple-2/telegram-purple.so /usr/lib/purple-2/telegram-purple.so
 
 USER bitlbee
